@@ -1,3 +1,4 @@
+using System;
 using Core.Scripts.Player;
 using UnityEngine;
 using Zenject;
@@ -21,7 +22,6 @@ namespace Core.Scripts
         public void Construct(IFlipGravity gravityFlipper)
         {
             _gravityFlipper = gravityFlipper;
-            _gravityFlipper.IsNormalGravity.Changed += PlayEffect;
         }
 
         private void PlayEffect(bool oldTypeGravity, bool IsNormalGravity)
@@ -46,6 +46,11 @@ namespace Core.Scripts
         private void OnDestroy()
         {
             _gravityFlipper.IsNormalGravity.Changed -= PlayEffect;
+        }
+        
+        private void Start()
+        {
+            _gravityFlipper.IsNormalGravity.Changed += PlayEffect;
         }
 
         #endregion

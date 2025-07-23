@@ -1,5 +1,4 @@
 using Core.Scripts.Player;
-using ModestTree;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -11,6 +10,7 @@ namespace Core.Scripts
         #region Feilds
 
         [SerializeField] private Rigidbody2D _rigidbodyPlayer;
+        [SerializeField] private float _gravityFlipForce = 10f;
         
         private IGroundCheck _groundCheck;
         
@@ -51,16 +51,23 @@ namespace Core.Scripts
                 bool gravityIsNormal = _rigidbodyPlayer.gravityScale > 0;
                 
                 IsNormalGravity.Value = !gravityIsNormal;
+
+                _rigidbodyPlayer.gravityScale *= -1;
                 
-                _rigidbodyPlayer.gravityScale = gravityIsNormal ? _noGravityScale : _defaultGravityScale;
-                
-                Quaternion rotation = Quaternion.Euler(gravityIsNormal ? _noGravityRotationPlayer : _defaultRotationPlayer,
-                    transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-                transform.rotation = rotation;
+                _rigidbodyPlayer.AddForce(Vector2.down * _rigidbodyPlayer.gravityScale * _gravityFlipForce, ForceMode2D.Force);
+
+                ChangeRotationPlayerAfterFlipGravity(gravityIsNormal);
             }
         }
 
-        public void HandlerGrounded(bool oldValue, bool isGrounded)
+        private void ChangeRotationPlayerAfterFlipGravity(bool gravityIsNormal)
+        {
+            Quaternion rotation = Quaternion.Euler(gravityIsNormal ? _noGravityRotationPlayer : _defaultRotationPlayer,
+                transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+            transform.rotation = rotation;
+        }
+
+        private void HandlerGrounded(bool oldValue, bool isGrounded)
         {
             if (_isFlipping && isGrounded)
             {
