@@ -1,4 +1,5 @@
 
+using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,7 +8,7 @@ namespace Core.Scripts.Player
     public interface IPlayerMovement
     {
         public void Move(Vector2 movement);
-        public ReactiveVariable<float> HorizontalInput { get; }
+        public ReactiveProperty<float> HorizontalInput { get; }
     }
     
     public interface IPlayerJump

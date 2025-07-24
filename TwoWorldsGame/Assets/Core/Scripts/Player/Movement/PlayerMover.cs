@@ -1,3 +1,4 @@
+using UniRx;
 using UnityEngine;
 
 namespace Core.Scripts.Player.Movement
@@ -11,7 +12,7 @@ namespace Core.Scripts.Player.Movement
         
         #region Peroperties
 
-        public ReactiveVariable<float> HorizontalInput { get; } = new ReactiveVariable<float>();
+        public ReactiveProperty<float> HorizontalInput { get; } = new ReactiveProperty<float>();
 
         #endregion
         

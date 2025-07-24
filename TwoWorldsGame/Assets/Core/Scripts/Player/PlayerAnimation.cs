@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
@@ -12,8 +13,9 @@ namespace Core.Scripts.Player
         [SerializeField] private Animator _playerAnimator;
         [SerializeField] private SpriteRenderer _playerSpriteRenderer;
 
-        private IPlayerMovement _playerMovement;
         private IPlayerJump _playerJump;
+        
+        private CompositeDisposable _disposables = new CompositeDisposable();
 
         #region Animation Names
 
@@ -30,14 +32,13 @@ namespace Core.Scripts.Player
         [Inject]
         public void Construct(IPlayerMovement playerMovement, IPlayerJump playerJump)
         {
-            _playerMovement = playerMovement;
             _playerJump = playerJump;
-            
-            _playerMovement.HorizontalInput.Changed += FlipSprite;
+
+            playerMovement.HorizontalInput.Subscribe(FlipSprite).AddTo(_disposables);
             _playerJump.IsJump.Changed += StartJumpAnimation;
         }
 
-        private void FlipSprite(float oldValue, float value)
+        private void FlipSprite(float value)
         {
             _playerSpriteRenderer.flipX = value < 0;
             
@@ -53,7 +54,7 @@ namespace Core.Scripts.Player
 
         private void OnDestroy()
         {
-            _playerMovement.HorizontalInput.Changed -= FlipSprite;
+            _disposables.Clear();
             _playerJump.IsJump.Changed -= StartJumpAnimation;
         }
 
