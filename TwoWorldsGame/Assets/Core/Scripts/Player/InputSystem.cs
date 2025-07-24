@@ -1,9 +1,6 @@
 using System;
 using Core.Scripts.LevelController;
-using UniRx;
-using Unity.Plastic.Newtonsoft.Json.Serialization;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Zenject;
 
 namespace Core.Scripts.Player

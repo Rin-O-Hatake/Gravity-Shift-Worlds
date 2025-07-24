@@ -1,19 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
-using Core.Scripts.UI;
+using Core.Scripts.Camera;
+using Core.Scripts.Player;
 using UniRx;
 using UnityEngine;
 using Zenject;
 
 namespace Core.Scripts.LevelController
 {
-    public class LevelController : MonoBehaviour, ILoadingNextLevel
+    public class LevelController : MonoBehaviour, ILoadingNextLevel, ILoadingLevel
     {
         #region Fields
 
         [SerializeField] private List<LevelDataView> _levelDataViews = new List<LevelDataView>();
 
         private ILevelTransitionContact _levelTransitionContact;
+        private ISetupCamera _setupCamera;
+        private IPlayerSetup _playerSetup;
 
         #region Properties
 
@@ -26,9 +29,11 @@ namespace Core.Scripts.LevelController
         #region Inject
 
         [Inject]
-        public void Construct(ILevelTransitionContact levelTransitionContact)
+        public void Construct(ILevelTransitionContact levelTransitionContact, ISetupCamera setupCamera, IPlayerSetup playerSetup)
         {
+            _setupCamera = setupCamera;
             _levelTransitionContact = levelTransitionContact;
+            _playerSetup = playerSetup;
         }
 
         #endregion
@@ -51,6 +56,8 @@ namespace Core.Scripts.LevelController
         {
             ShowLevel(levelDataView);
             _levelTransitionContact.SetNewPosition(levelDataView.ExitLevelPortal.position);
+            _setupCamera.SetupLimitationsMove(levelDataView.LevelPolygonCollider2D);
+            _playerSetup.SetupPosition(levelDataView.StartPositionPlayer.position);
         }
         private void HideLevel(int levelNumber)
         {
@@ -60,6 +67,11 @@ namespace Core.Scripts.LevelController
         private void ShowLevel(LevelDataView levelDataView)
         {
             levelDataView.gameObject.SetActive(true);
+        }
+
+        public void LoadLevel(int levelIndex = 1)
+        {
+            CurrentLevelIndex.Value = levelIndex;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Core.Scripts.Monoinstallers
         [SerializeField] private GroundCheck _groundCheck;
         [SerializeField] private PlayerAnimation _playerAnimation;
         [SerializeField] private GravityFlipper _gravityFlipper;
+        [SerializeField] private PlayerSetup _playerSetup; 
 
         #endregion
         
@@ -28,6 +29,7 @@ namespace Core.Scripts.Monoinstallers
             InjectPlayerJumper();
             InjectGroundCheck();
             InjectGravityFlipper();
+            InjectPlayerSetup();
 
             BindingInputSystem();
         }
@@ -55,6 +57,11 @@ namespace Core.Scripts.Monoinstallers
         }
 
         #endregion
+        
+        private void InjectPlayerSetup()
+        {
+            Container.Bind<IPlayerSetup>().To<PlayerSetup>().FromInstance(_playerSetup);
+        }
 
         private void BindingInputSystem()
         {

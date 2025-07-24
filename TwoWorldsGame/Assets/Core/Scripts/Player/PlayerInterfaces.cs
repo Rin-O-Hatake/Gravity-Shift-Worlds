@@ -1,4 +1,3 @@
-
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -27,5 +26,10 @@ namespace Core.Scripts.Player
     {
         public void FlipGravity(InputAction.CallbackContext context);
         public ReactiveProperty<bool> IsNormalGravity { get; }
+    }
+
+    public interface IPlayerSetup
+    {
+        public void SetupPosition(Vector3 position);
     }
 }
