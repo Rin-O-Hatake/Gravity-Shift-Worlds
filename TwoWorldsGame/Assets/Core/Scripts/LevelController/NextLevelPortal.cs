@@ -1,17 +1,32 @@
-using UniRx;
+using Core.Scripts.UI;
 using UnityEngine;
 
 namespace Core.Scripts.LevelController
 {
     public class NextLevelPortal : MonoBehaviour, ILevelTransitionContact
     {
-        public ReactiveProperty<bool> IsTransitionContact { get; } = new ReactiveProperty<bool>(false);
+        #region Fields
+        
+        [SerializeField] private ShowTooltipInfoData _showTooltipInfo;
+        
+        #region Properties
 
+        public ShowTooltipInfoData IsTransitionContact => _showTooltipInfo;
+
+        #endregion
+
+        #endregion
+        
+        public void SetNewPosition(Vector3 newPosition)
+        {
+            transform.position = newPosition;
+        }
+        
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Player"))
             {
-                IsTransitionContact.Value = true;
+                _showTooltipInfo.IsShowTooltip.Value = true;
             }
         }
         
@@ -19,7 +34,7 @@ namespace Core.Scripts.LevelController
         {
             if (other.CompareTag("Player"))
             {
-                IsTransitionContact.Value = false;
+                _showTooltipInfo.IsShowTooltip.Value = false;
             }
         }
     }

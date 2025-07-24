@@ -1,10 +1,11 @@
-using UniRx;
+using Core.Scripts.UI;
 using UnityEngine;
 
 namespace Core.Scripts.LevelController
 {
     public interface ILevelTransitionContact
     {
-        public ReactiveProperty<bool> IsTransitionContact { get; }
+        public ShowTooltipInfoData IsTransitionContact { get; }
+        public void SetNewPosition(Vector3 newPosition);
     }
 }

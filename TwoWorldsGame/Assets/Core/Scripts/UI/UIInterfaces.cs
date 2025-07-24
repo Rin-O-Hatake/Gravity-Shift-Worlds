@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UniRx;
 
-namespace Core.Scripts.UI.DiamondCounter
+namespace Core.Scripts.UI
 {
     public interface IDiamondCounter
     {
@@ -8,5 +9,10 @@ namespace Core.Scripts.UI.DiamondCounter
         
         public void AddDiamonds(int amount = 1);
         public void RemoveDiamonds(int amount = 1);
+    }
+
+    public interface ITooltipDataRepository
+    {
+        public List<ShowTooltipInfoData> InteractiveObjects { get; }
     }
 }
