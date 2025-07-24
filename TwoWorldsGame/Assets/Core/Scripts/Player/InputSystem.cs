@@ -1,5 +1,9 @@
 using System;
+using Core.Scripts.LevelController;
+using UniRx;
+using Unity.Plastic.Newtonsoft.Json.Serialization;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 namespace Core.Scripts.Player
@@ -8,31 +12,40 @@ namespace Core.Scripts.Player
     {
         #region Fields
 
-        private PlayerInputAction _playerInputAction;
+        private PlayerInputAction _playerInputAction = new PlayerInputAction();
         
         private IPlayerMovement _playerMovement;
-        private IPlayerJump _playerJump;
-        private IFlipGravity _playerGravity;
-
+        
         #endregion
+
+        #region Inject
+
+        [Inject]
+        private void Construct(ILevelTransitionContact levelTransitionContact)
+        {
+            _playerInputAction.Interaction.Enable();
+            
+            _playerInputAction.Interaction.InteractionDoor.performed += levelTransitionContact.InteractionPortal;
+        }
 
         #region MovementInject
         
         [Inject]
         private void Construct(IPlayerMovement playerMovement, IPlayerJump playerJump, IFlipGravity playerGravity)
         {
-            _playerInputAction = new PlayerInputAction();
             _playerInputAction.PlayerMovement.Enable();
             
             _playerMovement = playerMovement;
-            _playerGravity = playerGravity;
-            _playerJump = playerJump;
             
-            _playerInputAction.PlayerMovement.Jump.performed += _playerJump.Jump;
-            _playerInputAction.PlayerMovement.FLipGravity.performed += _playerGravity.FlipGravity;
+            _playerInputAction.PlayerMovement.Jump.performed += playerJump.Jump;
+            _playerInputAction.PlayerMovement.FLipGravity.performed += playerGravity.FlipGravity;
         }
         
         #endregion
+
+        #endregion
+
+        #region Zenject Interfaces
 
         public void Tick()
         {
@@ -43,5 +56,7 @@ namespace Core.Scripts.Player
         {
             _playerInputAction?.Dispose();
         }
+
+        #endregion
     }
 }

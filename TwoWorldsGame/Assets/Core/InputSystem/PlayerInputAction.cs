@@ -134,6 +134,34 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Interaction"",
+            ""id"": ""76279e07-1081-4e59-9e98-77ad32f14f55"",
+            ""actions"": [
+                {
+                    ""name"": ""InteractionDoor"",
+                    ""type"": ""Button"",
+                    ""id"": ""3232542b-0620-45a6-8c48-0a779e91e6bb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d17328cc-3079-46eb-8bc9-b84b2cb3f175"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InteractionDoor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -143,11 +171,15 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         m_PlayerMovement_Move = m_PlayerMovement.FindAction("Move", throwIfNotFound: true);
         m_PlayerMovement_Jump = m_PlayerMovement.FindAction("Jump", throwIfNotFound: true);
         m_PlayerMovement_FLipGravity = m_PlayerMovement.FindAction("FLipGravity", throwIfNotFound: true);
+        // Interaction
+        m_Interaction = asset.FindActionMap("Interaction", throwIfNotFound: true);
+        m_Interaction_InteractionDoor = m_Interaction.FindAction("InteractionDoor", throwIfNotFound: true);
     }
 
     ~@PlayerInputAction()
     {
         UnityEngine.Debug.Assert(!m_PlayerMovement.enabled, "This will cause a leak and performance issues, PlayerInputAction.PlayerMovement.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Interaction.enabled, "This will cause a leak and performance issues, PlayerInputAction.Interaction.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -267,10 +299,60 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         }
     }
     public PlayerMovementActions @PlayerMovement => new PlayerMovementActions(this);
+
+    // Interaction
+    private readonly InputActionMap m_Interaction;
+    private List<IInteractionActions> m_InteractionActionsCallbackInterfaces = new List<IInteractionActions>();
+    private readonly InputAction m_Interaction_InteractionDoor;
+    public struct InteractionActions
+    {
+        private @PlayerInputAction m_Wrapper;
+        public InteractionActions(@PlayerInputAction wrapper) { m_Wrapper = wrapper; }
+        public InputAction @InteractionDoor => m_Wrapper.m_Interaction_InteractionDoor;
+        public InputActionMap Get() { return m_Wrapper.m_Interaction; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InteractionActions set) { return set.Get(); }
+        public void AddCallbacks(IInteractionActions instance)
+        {
+            if (instance == null || m_Wrapper.m_InteractionActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_InteractionActionsCallbackInterfaces.Add(instance);
+            @InteractionDoor.started += instance.OnInteractionDoor;
+            @InteractionDoor.performed += instance.OnInteractionDoor;
+            @InteractionDoor.canceled += instance.OnInteractionDoor;
+        }
+
+        private void UnregisterCallbacks(IInteractionActions instance)
+        {
+            @InteractionDoor.started -= instance.OnInteractionDoor;
+            @InteractionDoor.performed -= instance.OnInteractionDoor;
+            @InteractionDoor.canceled -= instance.OnInteractionDoor;
+        }
+
+        public void RemoveCallbacks(IInteractionActions instance)
+        {
+            if (m_Wrapper.m_InteractionActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IInteractionActions instance)
+        {
+            foreach (var item in m_Wrapper.m_InteractionActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_InteractionActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public InteractionActions @Interaction => new InteractionActions(this);
     public interface IPlayerMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnFLipGravity(InputAction.CallbackContext context);
+    }
+    public interface IInteractionActions
+    {
+        void OnInteractionDoor(InputAction.CallbackContext context);
     }
 }

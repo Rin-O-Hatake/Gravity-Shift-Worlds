@@ -57,15 +57,12 @@ namespace Core.Scripts.GravityFlipperFolder
             if (_groundCheck.IsGround.Value && !_isFlipping)
             {
                 _isFlipping = true;
-                bool gravityIsNormal = _rigidbodyPlayer.gravityScale > 0;
-                
-                IsNormalGravity.Value = !gravityIsNormal;
 
                 _rigidbodyPlayer.gravityScale *= -1;
                 
                 _rigidbodyPlayer.AddForce(Vector2.down * _rigidbodyPlayer.gravityScale * _gravityFlipForce, ForceMode2D.Force);
 
-                ChangeRotationPlayerAfterFlipGravity(gravityIsNormal);
+                ChangeRotationPlayerAfterFlipGravity(_rigidbodyPlayer.gravityScale > 0);
             }
         }
 
@@ -81,6 +78,7 @@ namespace Core.Scripts.GravityFlipperFolder
             if (_isFlipping && isGrounded)
             {
                 _isFlipping = false;
+                IsNormalGravity.Value = _rigidbodyPlayer.gravityScale > 0;
             }
         }
     }

@@ -132,11 +132,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 530817808005788533, guid: f031b2ad5da4b644bb82632e43e89750, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.4972806
+      value: -7.02
       objectReference: {fileID: 0}
     - target: {fileID: 530817808005788533, guid: f031b2ad5da4b644bb82632e43e89750, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.025472
+      value: 2.69
       objectReference: {fileID: 0}
     - target: {fileID: 530817808005788533, guid: f031b2ad5da4b644bb82632e43e89750, type: 3}
       propertyPath: m_LocalPosition.z
@@ -173,6 +173,18 @@ PrefabInstance:
     - target: {fileID: 7025137544528360281, guid: f031b2ad5da4b644bb82632e43e89750, type: 3}
       propertyPath: m_Name
       value: BackgroundTitle
+      objectReference: {fileID: 0}
+    - target: {fileID: 8477102211365951450, guid: f031b2ad5da4b644bb82632e43e89750, type: 3}
+      propertyPath: m_CellSize.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8477102211365951450, guid: f031b2ad5da4b644bb82632e43e89750, type: 3}
+      propertyPath: m_CellSize.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8477102211365951450, guid: f031b2ad5da4b644bb82632e43e89750, type: 3}
+      propertyPath: m_CellSize.z
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1662,11 +1674,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6311992715767137607, guid: 33fe9cb846112e24c8c6728d5e396977, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.67
+      value: -7.752
       objectReference: {fileID: 0}
     - target: {fileID: 6311992715767137607, guid: 33fe9cb846112e24c8c6728d5e396977, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.23
+      value: -2.319
       objectReference: {fileID: 0}
     - target: {fileID: 6311992715767137607, guid: 33fe9cb846112e24c8c6728d5e396977, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7030,7 +7042,7 @@ Transform:
   m_GameObject: {fileID: 1264380876}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.67, y: 0.06999993, z: -10}
+  m_LocalPosition: {x: -7.752, y: -0.019000053, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

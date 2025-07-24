@@ -12,7 +12,7 @@ namespace Core.Scripts.UI.LevelPoint__Door_Interaction_
 
         #region Properties
 
-        public List<ShowTooltipInfoData> InteractiveObjects { get; } = new List<ShowTooltipInfoData>();
+        public List<LevelTransitionContactData> InteractiveObjects { get; } = new List<LevelTransitionContactData>();
 
         #endregion
 

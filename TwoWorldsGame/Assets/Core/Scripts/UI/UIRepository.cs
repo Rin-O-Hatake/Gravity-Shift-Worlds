@@ -1,26 +1,27 @@
 using System;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Core.Scripts.UI
 {
-    public enum TooltipType
+    public enum InteractionType
     {
         Door
     }
 
     [Serializable]
-    public class ShowTooltipInfoData
+    public class LevelTransitionContactData
     {
         #region Fields
 
-        [SerializeField] private TooltipType _type;
-        [SerializeField] private ReactiveProperty<bool> _isShowTooltip;
+        [SerializeField] private InteractionType _type;
+        [SerializeField] private ReactiveProperty<bool> _isInteractObject;
 
         #region Properties
 
-        public TooltipType Type => _type;
-        public ReactiveProperty<bool> IsShowTooltip => _isShowTooltip;
+        public InteractionType Type => _type;
+        public ReactiveProperty<bool> IsInteractObject => _isInteractObject;
 
         #endregion
         
@@ -32,12 +33,12 @@ namespace Core.Scripts.UI
     {
         #region Fields
 
-        [SerializeField] private TooltipType _type;
+        [SerializeField] private InteractionType _type;
         [SerializeField] private GameObject _tooltipView;
 
         #region Properties
 
-        public TooltipType Type => _type;
+        public InteractionType Type => _type;
         public GameObject TooltipView => _tooltipView;
 
         #endregion

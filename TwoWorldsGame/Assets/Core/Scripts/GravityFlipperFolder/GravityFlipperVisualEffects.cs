@@ -23,8 +23,6 @@ namespace Core.Scripts.GravityFlipperFolder
         public void Construct(IFlipGravity gravityFlipper)
         {
             _gravityFlipper = gravityFlipper;
-            
-            _gravityFlipper.IsNormalGravity.Skip(1).Subscribe(PlayEffect).AddTo(_disposables);
         }
 
         private void PlayEffect(bool IsNormalGravity)
@@ -49,6 +47,11 @@ namespace Core.Scripts.GravityFlipperFolder
         private void OnDestroy()
         {
             _disposables.Clear();
+        }
+
+        private void Start()
+        {
+            _gravityFlipper.IsNormalGravity.Skip(1).Subscribe(PlayEffect).AddTo(_disposables);
         }
 
         #endregion

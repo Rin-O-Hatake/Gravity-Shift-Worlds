@@ -1,5 +1,7 @@
 using Core.Scripts.UI;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Core.Scripts.LevelController
 {
@@ -7,13 +9,25 @@ namespace Core.Scripts.LevelController
     {
         #region Fields
         
-        [SerializeField] private ShowTooltipInfoData _showTooltipInfo;
+        [SerializeField] private LevelTransitionContactData levelTransitionContact;
+
+        private ILoadingNextLevel _loadingNextLevel;
         
         #region Properties
 
-        public ShowTooltipInfoData IsTransitionContact => _showTooltipInfo;
+        public LevelTransitionContactData IsTransitionContact => levelTransitionContact;
 
         #endregion
+
+        #endregion
+
+        #region Inject
+
+        [Inject]
+        private void Construct(ILoadingNextLevel loadingNextLevel)
+        {
+            _loadingNextLevel = loadingNextLevel;
+        }
 
         #endregion
         
@@ -21,12 +35,24 @@ namespace Core.Scripts.LevelController
         {
             transform.position = newPosition;
         }
-        
+
+        public void InteractionPortal(InputAction.CallbackContext context)
+        {
+            if (!IsTransitionContact.IsInteractObject.Value)
+            {
+                return;
+            }
+            
+            _loadingNextLevel.LoadNextLevel();
+        }
+
+        #region MonoBehaviour
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Player"))
             {
-                _showTooltipInfo.IsShowTooltip.Value = true;
+                levelTransitionContact.IsInteractObject.Value = true;
             }
         }
         
@@ -34,8 +60,10 @@ namespace Core.Scripts.LevelController
         {
             if (other.CompareTag("Player"))
             {
-                _showTooltipInfo.IsShowTooltip.Value = false;
+                levelTransitionContact.IsInteractObject.Value = false;
             }
         }
+
+        #endregion
     }
 }

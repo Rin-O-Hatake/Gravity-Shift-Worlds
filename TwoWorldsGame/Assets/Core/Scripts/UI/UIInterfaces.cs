@@ -13,6 +13,6 @@ namespace Core.Scripts.UI
 
     public interface ITooltipDataRepository
     {
-        public List<ShowTooltipInfoData> InteractiveObjects { get; }
+        public List<LevelTransitionContactData> InteractiveObjects { get; }
     }
 }

@@ -20,7 +20,7 @@ namespace Core.Scripts.UI.LevelPoint__Door_Interaction_
             foreach (var tooltip in _tooltips)
             {
                 tooltipDataRepository.InteractiveObjects.FirstOrDefault(interactiveObject => 
-                    interactiveObject.Type == tooltip.Type).IsShowTooltip.Subscribe(isShowButton =>
+                    interactiveObject.Type == tooltip.Type).IsInteractObject.Subscribe(isShowButton =>
                 {
                     ToggleTooltips(tooltip.TooltipView, isShowButton);
                 }).AddTo(this);

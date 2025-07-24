@@ -112,6 +112,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Interaction",
+            "id": "76279e07-1081-4e59-9e98-77ad32f14f55",
+            "actions": [
+                {
+                    "name": "InteractionDoor",
+                    "type": "Button",
+                    "id": "3232542b-0620-45a6-8c48-0a779e91e6bb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d17328cc-3079-46eb-8bc9-b84b2cb3f175",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InteractionDoor",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
