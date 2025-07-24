@@ -1,9 +1,10 @@
 using Core.Scripts.Player;
+using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
-namespace Core.Scripts
+namespace Core.Scripts.GravityFlipperFolder
 {
     public class GravityFlipper : MonoBehaviour, IFlipGravity
     {
@@ -21,26 +22,34 @@ namespace Core.Scripts
         private const float _noGravityRotationPlayer = -180.0f;
 
         private bool _isFlipping;
+        
+        private CompositeDisposable _disposables = new CompositeDisposable();
 
         #region Properties
 
-        public ReactiveVariable<bool> IsNormalGravity { get; } = new ReactiveVariable<bool>();
+        public ReactiveProperty<bool> IsNormalGravity { get; } = new ReactiveProperty<bool>();
 
         #endregion
 
         #endregion
 
-        private void Awake()
+        #region MonoBehaviour
+
+        private void OnDestroy()
         {
-            IsNormalGravity.Value = true;
+            _disposables.Clear();
         }
+
+        #endregion
         
         [Inject]
         public void Construct(IGroundCheck groundCheck)
         {
             _groundCheck = groundCheck;
             
-            _groundCheck.IsGround.Changed += HandlerGrounded;
+            _groundCheck.IsGround.Subscribe(HandlerGrounded).AddTo(_disposables);
+            
+            IsNormalGravity.Value = true;
         }
 
         public void FlipGravity(InputAction.CallbackContext context)
@@ -67,7 +76,7 @@ namespace Core.Scripts
             transform.rotation = rotation;
         }
 
-        private void HandlerGrounded(bool oldValue, bool isGrounded)
+        private void HandlerGrounded(bool isGrounded)
         {
             if (_isFlipping && isGrounded)
             {

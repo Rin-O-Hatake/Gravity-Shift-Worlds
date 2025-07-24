@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -13,14 +14,16 @@ namespace Core.Scripts.Player.Movement.Jumper
         [SerializeField] private Rigidbody2D _rigidbodyPlayer;
         [SerializeField] private float jumpForce = 10f;
         
-        [FormerlySerializedAs("_playerJumperEffect")] [SerializeField] private PlayerJumperVisualEffects playerJumperVisualEffects = new PlayerJumperVisualEffects();
+        [SerializeField] private PlayerJumperVisualEffects playerJumperVisualEffects = new PlayerJumperVisualEffects();
         
         private IGroundCheck _groundCheck;
         private IFlipGravity _flipGravity;
+        
+        private CompositeDisposable _disposables = new CompositeDisposable();
 
         #region Properties
 
-        public ReactiveVariable<bool> IsJump { get; } = new ReactiveVariable<bool>();
+        public ReactiveProperty<bool> IsJump { get; } = new ReactiveProperty<bool>();
         
         #endregion
 
@@ -32,7 +35,7 @@ namespace Core.Scripts.Player.Movement.Jumper
             _groundCheck = groundCheck;
             _flipGravity = flipGravity;
 
-            _groundCheck.IsGround.Changed += HandlerGrounded;
+            _groundCheck.IsGround.Subscribe(HandlerGrounded).AddTo(_disposables);
             playerJumperVisualEffects.Initialize();
         }
 
@@ -47,7 +50,7 @@ namespace Core.Scripts.Player.Movement.Jumper
             }
         }
 
-        public void HandlerGrounded(bool oldValue, bool isGrounded)
+        public void HandlerGrounded(bool isGrounded)
         {
             if (IsJump.Value && isGrounded)
             {
@@ -59,7 +62,7 @@ namespace Core.Scripts.Player.Movement.Jumper
 
         private void OnDestroy()
         {
-            _groundCheck.IsGround.Changed -= HandlerGrounded;
+            _disposables.Clear();
         }
 
         #endregion

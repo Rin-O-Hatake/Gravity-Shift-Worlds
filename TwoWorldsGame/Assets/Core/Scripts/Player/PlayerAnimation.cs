@@ -1,7 +1,5 @@
-using System;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace Core.Scripts.Player
@@ -13,17 +11,15 @@ namespace Core.Scripts.Player
         [SerializeField] private Animator _playerAnimator;
         [SerializeField] private SpriteRenderer _playerSpriteRenderer;
 
-        private IPlayerJump _playerJump;
-        
         private CompositeDisposable _disposables = new CompositeDisposable();
 
         #region Animation Names
 
-        private const string JumpAnimation = "IsJump";
-        private const string RunAnimation = "IsRun";
+        private const string JUMP_ANIMATION = "IsJump";
+        private const string RUN_ANIMATION = "IsRun";
         
-        private static readonly int IsJump = Animator.StringToHash(JumpAnimation);
-        private static readonly int IsRun = Animator.StringToHash(RunAnimation);
+        private static readonly int IsJump = Animator.StringToHash(JUMP_ANIMATION);
+        private static readonly int IsRun = Animator.StringToHash(RUN_ANIMATION);
 
         #endregion
 
@@ -32,10 +28,8 @@ namespace Core.Scripts.Player
         [Inject]
         public void Construct(IPlayerMovement playerMovement, IPlayerJump playerJump)
         {
-            _playerJump = playerJump;
-
             playerMovement.HorizontalInput.Subscribe(FlipSprite).AddTo(_disposables);
-            _playerJump.IsJump.Changed += StartJumpAnimation;
+            playerJump.IsJump.Subscribe(StartJumpAnimation).AddTo(_disposables);
         }
 
         private void FlipSprite(float value)
@@ -45,7 +39,7 @@ namespace Core.Scripts.Player
             _playerAnimator.SetBool(IsRun, value != 0);
         }
 
-        private void StartJumpAnimation(bool oldValue, bool value)
+        private void StartJumpAnimation(bool value)
         {
             _playerAnimator.SetBool(IsJump, value);
         }
@@ -55,7 +49,6 @@ namespace Core.Scripts.Player
         private void OnDestroy()
         {
             _disposables.Clear();
-            _playerJump.IsJump.Changed -= StartJumpAnimation;
         }
 
         #endregion

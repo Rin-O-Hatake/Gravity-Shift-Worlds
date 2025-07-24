@@ -1,3 +1,4 @@
+using UniRx;
 using UnityEngine;
 
 namespace Core.Scripts.Player.Movement
@@ -11,7 +12,7 @@ namespace Core.Scripts.Player.Movement
 
         #region Properties
 
-        public ReactiveVariable<bool> IsGround { get; } = new ReactiveVariable<bool>();
+        public ReactiveProperty<bool> IsGround { get; } = new ReactiveProperty<bool>();
 
         #endregion
         

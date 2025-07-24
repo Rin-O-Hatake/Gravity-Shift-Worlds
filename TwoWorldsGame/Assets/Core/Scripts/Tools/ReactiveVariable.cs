@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Core.Scripts
+namespace Core.Scripts.Tools
 {
     public class ReactiveVariable<T>
     {

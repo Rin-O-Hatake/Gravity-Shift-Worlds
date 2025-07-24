@@ -1,9 +1,9 @@
-using System;
 using Core.Scripts.Player;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
-namespace Core.Scripts
+namespace Core.Scripts.GravityFlipperFolder
 {
     public class GravityFlipperVisualEffects : MonoBehaviour
     {
@@ -15,6 +15,7 @@ namespace Core.Scripts
         [SerializeField] private ParticleSystem _gravityFlipperEffectDown;
         
         private IFlipGravity _gravityFlipper;
+        private CompositeDisposable _disposables = new CompositeDisposable();
 
         #endregion
 
@@ -22,9 +23,11 @@ namespace Core.Scripts
         public void Construct(IFlipGravity gravityFlipper)
         {
             _gravityFlipper = gravityFlipper;
+            
+            _gravityFlipper.IsNormalGravity.Skip(1).Subscribe(PlayEffect).AddTo(_disposables);
         }
 
-        private void PlayEffect(bool oldTypeGravity, bool IsNormalGravity)
+        private void PlayEffect(bool IsNormalGravity)
         {
             EnableEffect(IsNormalGravity ? _gravityFlipperEffectDown : _gravityFlipperEffectUp);
         }
@@ -45,12 +48,7 @@ namespace Core.Scripts
 
         private void OnDestroy()
         {
-            _gravityFlipper.IsNormalGravity.Changed -= PlayEffect;
-        }
-        
-        private void Start()
-        {
-            _gravityFlipper.IsNormalGravity.Changed += PlayEffect;
+            _disposables.Clear();
         }
 
         #endregion

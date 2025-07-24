@@ -14,18 +14,18 @@ namespace Core.Scripts.Player
     public interface IPlayerJump
     {
         public void Jump(InputAction.CallbackContext context);
-        public ReactiveVariable<bool> IsJump { get; }
+        public ReactiveProperty<bool> IsJump { get; }
     }
 
     public interface IGroundCheck
     {
-        public ReactiveVariable<bool> IsGround { get; }
+        public ReactiveProperty<bool> IsGround { get; }
         public Transform GetFootTransform();
     }
 
     public interface IFlipGravity
     {
         public void FlipGravity(InputAction.CallbackContext context);
-        public ReactiveVariable<bool> IsNormalGravity { get; }
+        public ReactiveProperty<bool> IsNormalGravity { get; }
     }
 }
