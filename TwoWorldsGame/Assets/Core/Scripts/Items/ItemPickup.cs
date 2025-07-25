@@ -1,6 +1,4 @@
-using System;
 using Core.Scripts.UI;
-using Core.Scripts.UI.DiamondCounter;
 using UnityEngine;
 using Zenject;
 

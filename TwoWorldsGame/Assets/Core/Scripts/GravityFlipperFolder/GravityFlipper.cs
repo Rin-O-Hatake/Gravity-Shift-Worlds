@@ -15,9 +15,6 @@ namespace Core.Scripts.GravityFlipperFolder
         
         private IGroundCheck _groundCheck;
         
-        private const float _defaultGravityScale = 1.0f; 
-        private const float _noGravityScale = -1.0f;
-
         private const float _defaultRotationPlayer = 180.0f;
         private const float _noGravityRotationPlayer = -180.0f;
 

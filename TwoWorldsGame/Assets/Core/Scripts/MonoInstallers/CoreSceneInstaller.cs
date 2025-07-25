@@ -1,4 +1,5 @@
 using System;
+using Core.Scripts.Audio;
 using Core.Scripts.Camera;
 using Core.Scripts.DataManager;
 using Core.Scripts.LevelController;
@@ -14,6 +15,7 @@ namespace Core.Scripts.MonoInstallers
 
         [SerializeField] private VirtualCameraController _cameraController;
         [SerializeField] private LevelController.LevelController _levelController;
+        [SerializeField] private MovementSound _movementSound;
 
         #endregion
         
@@ -24,12 +26,20 @@ namespace Core.Scripts.MonoInstallers
             InjectDataStorage();
             InjectStorageManager();
             InjectGameState();
+            InjectMovementSound();
         }
 
-        private void InjectStorageManager()
+        #region Audio
+
+        private void InjectMovementSound()
         {
-            Container.Bind<StorageManager>().FromNew().AsSingle().NonLazy();
+            Container.Bind<IJumpSound>().To<MovementSound>().FromInstance(_movementSound);
+            Container.Bind<IMoveSound>().To<MovementSound>().FromInstance(_movementSound);
         }
+
+        #endregion
+
+        #region Game State
 
         private void InjectGameState()
         {
@@ -37,6 +47,15 @@ namespace Core.Scripts.MonoInstallers
             Container.Bind<IPauseState>().To<GameState>().AsCached();
             Container.Bind<ILoadingState>().To<GameState>().AsCached();
             Container.Bind<IStoppable>().To<GameState>().AsCached();
+        }
+
+        #endregion
+
+        #region Data Storage
+
+        private void InjectStorageManager()
+        {
+            Container.Bind<StorageManager>().FromNew().AsSingle().NonLazy();
         }
         
         private void InjectDataStorage()
@@ -46,6 +65,8 @@ namespace Core.Scripts.MonoInstallers
             Container.Bind<ISaveDataStorage>().To<DataStorage>().AsCached();
             Container.Bind<ILoaderDataStorage>().To<DataStorage>().AsCached();
         }
+
+        #endregion
 
         private void InjectSetupCamera()
         {

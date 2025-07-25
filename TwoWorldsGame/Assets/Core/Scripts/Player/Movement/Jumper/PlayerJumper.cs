@@ -1,3 +1,4 @@
+using Core.Scripts.Audio;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,6 +18,8 @@ namespace Core.Scripts.Player.Movement.Jumper
         private IGroundCheck _groundCheck;
         private IFlipGravity _flipGravity;
         
+        private IJumpSound _jumpSound;
+        
         private CompositeDisposable _disposables = new CompositeDisposable();
 
         #region Properties
@@ -26,6 +29,13 @@ namespace Core.Scripts.Player.Movement.Jumper
         #endregion
 
         #endregion
+        
+        [Inject]
+        public void Construct(IJumpSound jumpSound)
+        {
+            _jumpSound = jumpSound;
+        }
+        
 
         [Inject]
         public void Construct(IGroundCheck groundCheck, IFlipGravity flipGravity)
@@ -44,7 +54,8 @@ namespace Core.Scripts.Player.Movement.Jumper
                 _rigidbodyPlayer.AddForce((_flipGravity.IsNormalGravity.Value ? Vector2.up : Vector2.down) * jumpForce, ForceMode2D.Impulse);
                 IsJump.Value = true;
 
-                playerJumperVisualEffects.PlayEffect(_groundCheck.GetFootTransform().position);
+                PlayEffectJump();
+                PlaySoundJump();
             }
         }
 
@@ -54,6 +65,16 @@ namespace Core.Scripts.Player.Movement.Jumper
             {
                 IsJump.Value = false;
             }
+        }
+
+        private void PlayEffectJump()
+        {
+            playerJumperVisualEffects.PlayEffect(_groundCheck.GetFootTransform().position);
+        }
+        
+        private void PlaySoundJump()
+        {
+            // _jumpSound.PlayJumpSound();
         }
 
         #region MonoBehaviour
