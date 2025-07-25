@@ -1,5 +1,6 @@
 using System;
 using Core.Scripts.LevelController;
+using Core.Scripts.StatesGame;
 using UnityEngine;
 using Zenject;
 
@@ -25,6 +26,12 @@ namespace Core.Scripts.Player
             _playerInputAction.Interaction.InteractionDoor.performed += levelTransitionContact.InteractionPortal;
         }
 
+        [Inject]
+        private void Construct(IStoppable stoppable)
+        {
+            stoppable.IsStop.Subscribe(CheckState);
+        }
+
         #region MovementInject
         
         [Inject]
@@ -38,6 +45,15 @@ namespace Core.Scripts.Player
             _playerInputAction.PlayerMovement.FLipGravity.performed += playerGravity.FlipGravity;
         }
         
+        #endregion
+
+        #region Check State
+
+        private void CheckState(bool isStopped)
+        {
+            
+        }
+
         #endregion
 
         #endregion

@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Core.Scripts.Camera;
 using Core.Scripts.Player;
+using Core.Scripts.StatesGame;
+using Core.Scripts.UI.Loading;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -17,6 +20,10 @@ namespace Core.Scripts.LevelController
         private ILevelTransitionContact _levelTransitionContact;
         private ISetupCamera _setupCamera;
         private IPlayerSetup _playerSetup;
+
+        private ILoadingState _loadingState;
+
+        private BaseFadePanel _loadingFadePanel;
 
         private const int START_LEVEL = 1;
 
@@ -38,11 +45,35 @@ namespace Core.Scripts.LevelController
             _playerSetup = playerSetup;
         }
 
+        [Inject]
+        public void Construct(BaseFadePanel loadingView)
+        {
+            _loadingFadePanel = loadingView;
+        }
+        
+        [Inject]
+        public void Construct(ILoadingState loadingState)
+        {
+            _loadingState = loadingState;
+        }
+
         #endregion
 
         public void LoadNextLevel()
         {
-            HideLevel(CurrentLevelIndex.Value);
+            if (!CurrentLevelIndex.HasValue)
+            {
+                Debug.LogError("CurrentLevelIndex is Null");
+                return;
+            }
+
+            if (_loadingState.IsLoading.Value)
+            {
+                return;
+            }
+            
+            _loadingState.SetLoadingState(true);
+            
             CurrentLevelIndex.Value++;
             LevelDataView levelDataView = _levelDataViews.FirstOrDefault(level => CurrentLevelIndex.Value == level.LevelNumber);
 
@@ -51,7 +82,7 @@ namespace Core.Scripts.LevelController
                 return;
             }
 
-            SetupLevelData(levelDataView);
+            _loadingFadePanel.FadeInLoadingPanel(() => SetupLevelData(levelDataView)).Forget();
         }
 
         private void SetupLevelData(LevelDataView levelDataView)
@@ -60,10 +91,14 @@ namespace Core.Scripts.LevelController
             _levelTransitionContact.SetNewPosition(levelDataView.ExitLevelPortal.position);
             _setupCamera.SetupLimitationsMove(levelDataView.LevelPolygonCollider2D);
             _playerSetup.SetupPosition(levelDataView.StartPositionPlayer.position);
+            
+            HideLevel(CurrentLevelIndex.LastValue);
         }
         private void HideLevel(int levelNumber)
         {
             _levelDataViews.FirstOrDefault(level => level.LevelNumber == levelNumber).gameObject.SetActive(false);
+            _loadingFadePanel.FadeOutLoadingPanel().Forget();
+            _loadingState.SetLoadingState(false);
         }
 
         private void ShowLevel(LevelDataView levelDataView)

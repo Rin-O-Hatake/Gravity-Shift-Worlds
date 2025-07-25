@@ -96,6 +96,10 @@ namespace UniRx
 
         [NonSerialized]
         bool isDisposed = false;
+        
+        private T lastValue;
+        
+        public T LastValue => lastValue;
 
         protected virtual IEqualityComparer<T> EqualityComparer
         {
@@ -115,6 +119,7 @@ namespace UniRx
             {
                 if (!EqualityComparer.Equals(this.value, value))
                 {
+                    SaveLastValue();
                     SetValue(value);
                     if (isDisposed)
                         return;
@@ -157,6 +162,11 @@ namespace UniRx
         protected virtual void SetValue(T value)
         {
             this.value = value;
+        }
+
+        protected virtual void SaveLastValue()
+        {
+            lastValue = this.value;
         }
 
         public void SetValueAndForceNotify(T value)

@@ -2,6 +2,7 @@ using Core.Scripts.LevelController;
 using Core.Scripts.UI;
 using Core.Scripts.UI.DiamondCounter;
 using Core.Scripts.UI.LevelPoint__Door_Interaction_;
+using Core.Scripts.UI.Loading;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +13,7 @@ namespace Core.Scripts.MonoInstallers
         #region Fields
 
         [SerializeField] private NextLevelPortal _nextLevelPortal;
+        [SerializeField] private LoadingView _loadingView;
 
         #endregion
         public override void InstallBindings()
@@ -19,6 +21,12 @@ namespace Core.Scripts.MonoInstallers
             BindingDiamondCount();
             BindingTooltipRepository();
             InjectLevelPortal();
+            InjectLoadingFadePanel();
+        }
+
+        private void InjectLoadingFadePanel()
+        {
+            Container.Bind<BaseFadePanel>().To<LoadingView>().FromInstance(_loadingView);
         }
 
         private void InjectLevelPortal()

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UniRx;
 
 namespace Core.Scripts.UI
@@ -16,4 +18,5 @@ namespace Core.Scripts.UI
     {
         public List<LevelTransitionContactData> InteractiveObjects { get; }
     }
+    
 }

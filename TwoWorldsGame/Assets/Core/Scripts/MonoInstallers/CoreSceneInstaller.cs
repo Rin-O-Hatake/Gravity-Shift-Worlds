@@ -2,6 +2,7 @@ using System;
 using Core.Scripts.Camera;
 using Core.Scripts.DataManager;
 using Core.Scripts.LevelController;
+using Core.Scripts.StatesGame;
 using UnityEngine;
 using Zenject;
 
@@ -22,11 +23,20 @@ namespace Core.Scripts.MonoInstallers
             InjectLevelController();
             InjectDataStorage();
             InjectStorageManager();
+            InjectGameState();
         }
 
         private void InjectStorageManager()
         {
-            Container.Bind<StorageManager>().FromNew().AsCached().NonLazy();
+            Container.Bind<StorageManager>().FromNew().AsSingle().NonLazy();
+        }
+
+        private void InjectGameState()
+        {
+            Container.Bind<GameState>().FromNew().AsCached().NonLazy();
+            Container.Bind<IPauseState>().To<GameState>().AsCached();
+            Container.Bind<ILoadingState>().To<GameState>().AsCached();
+            Container.Bind<IStoppable>().To<GameState>().AsCached();
         }
         
         private void InjectDataStorage()
