@@ -12,16 +12,19 @@ namespace Core.Scripts.DataManager
         public void SaveData(SaveDataType dataType, string data)
         {
             PlayerPrefs.SetString(dataType.ToString(), data);
+            Save();
         }
 
         public void SaveData(SaveDataType dataType, int data)
         {
             PlayerPrefs.SetInt(dataType.ToString(), data);
+            Save();
         }
 
         public void SaveData(SaveDataType dataType, float data)
         {
             PlayerPrefs.SetFloat(dataType.ToString(), data);
+            Save();
         }
 
         #endregion
@@ -45,7 +48,7 @@ namespace Core.Scripts.DataManager
             {
                 return default;
             }
-            
+
             return PlayerPrefs.GetInt(dataType.ToString());
         }
 
@@ -60,5 +63,10 @@ namespace Core.Scripts.DataManager
         }
 
         #endregion
+
+        private void Save()
+        {
+            PlayerPrefs.Save();
+        }
     }
 }

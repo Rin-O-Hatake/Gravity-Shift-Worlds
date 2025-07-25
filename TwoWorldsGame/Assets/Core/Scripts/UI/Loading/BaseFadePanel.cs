@@ -20,17 +20,8 @@ namespace Core.Scripts.UI.Loading
 
         public async UniTaskVoid FadeInLoadingPanel(Action onFinished = default, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                Debug.Log("FadeInAsync cancelled before start.");
-                return;
-            }
-            
-            Color color = _currentImage.color;
-            color.a = 0f;
-            _currentImage.color = color;
-            
-            _rootPanel.SetActive(true);
+            EnableRootPanel();
+            ChangeAlphaColor(false);
 
             Tween fadeTween = _currentImage.DOFade(1f, _durationFade).SetEase(Ease.Linear);
 
@@ -49,23 +40,15 @@ namespace Core.Scripts.UI.Loading
         
         public async UniTaskVoid FadeOutLoadingPanel(Action onFinished = default, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                Debug.Log("FadeOutAsync cancelled before start.");
-                return;
-            }
+            EnableRootPanel();
+            ChangeAlphaColor(true);
             
-            Color color = _currentImage.color;
-            color.a = 1f;
-            _currentImage.color = color;
-
             Tween fadeTween = _currentImage.DOFade(0f, _durationFade).SetEase(Ease.Linear);
             
             var taskCompletionSource = TaskCompletionSource(fadeTween, cancellationToken, onFinished);
             
             try
             {
-                _rootPanel.SetActive(false);
                 await taskCompletionSource.Task;
             }
             catch(TaskCanceledException)
@@ -81,7 +64,9 @@ namespace Core.Scripts.UI.Loading
             fadeTween.OnComplete(() =>
             {
                 onFinished?.Invoke();
+                fadeTween.Kill();
                 taskCompletionSource.SetResult(true);
+                _rootPanel.SetActive(false);
             });
 
             cancellationToken.Register(() =>
@@ -94,6 +79,18 @@ namespace Core.Scripts.UI.Loading
             });
 
             return taskCompletionSource;
+        }
+
+        private void ChangeAlphaColor(bool isVisibility)
+        {
+            Color color = _currentImage.color;
+            color.a = Convert.ToSingle(isVisibility);
+            _currentImage.color = color;
+        }
+
+        private void EnableRootPanel()
+        {
+            _rootPanel.SetActive(true);
         }
     }
 }

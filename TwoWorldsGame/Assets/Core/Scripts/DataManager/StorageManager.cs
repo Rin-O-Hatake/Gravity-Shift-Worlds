@@ -2,6 +2,7 @@ using System;
 using Core.Scripts.LevelController;
 using Core.Scripts.UI;
 using UniRx;
+using UnityEngine;
 using Zenject;
 
 namespace Core.Scripts.DataManager
@@ -14,6 +15,8 @@ namespace Core.Scripts.DataManager
         private ISaveDataStorage _saveDataStorage;
         
         private CompositeDisposable _disposables = new CompositeDisposable();
+
+        private const int LOAD_SKIP_ITERATION = 2;
 
         #endregion
 
@@ -29,7 +32,7 @@ namespace Core.Scripts.DataManager
         [Inject]
         private void Construct(ILevelTracker levelTracker, ILoadingLevel  loadingLevel, IDiamondCounter diamondCounter)
         {
-            levelTracker.CurrentLevelIndex.Subscribe(level => BeginLevelSequence(level, diamondCounter))
+            levelTracker.CurrentLevelIndex.Skip(LOAD_SKIP_ITERATION).Subscribe(level => BeginLevelSequence(level, diamondCounter))
                 .AddTo(_disposables);
             
             LoadLevel(loadingLevel);
@@ -48,7 +51,7 @@ namespace Core.Scripts.DataManager
 
         private void SaveCountDiamonds(IDiamondCounter diamondCounter)
         {
-            _saveDataStorage.SaveData(SaveDataType.Level, diamondCounter.DiamondCount.Value);
+            _saveDataStorage.SaveData(SaveDataType.Diamonds, diamondCounter.DiamondCount.Value);
         }
 
         private void SaveLevel(int currentLevel)

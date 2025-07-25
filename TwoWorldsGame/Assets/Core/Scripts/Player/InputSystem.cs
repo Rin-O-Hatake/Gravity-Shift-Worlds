@@ -1,6 +1,7 @@
 using System;
 using Core.Scripts.LevelController;
 using Core.Scripts.StatesGame;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -14,6 +15,8 @@ namespace Core.Scripts.Player
         
         private IPlayerMovement _playerMovement;
         
+        private CompositeDisposable _disposables = new CompositeDisposable();
+        
         #endregion
 
         #region Inject
@@ -26,10 +29,11 @@ namespace Core.Scripts.Player
             _playerInputAction.Interaction.InteractionDoor.performed += levelTransitionContact.InteractionPortal;
         }
 
+        //TODO not working, does not subscribe
         [Inject]
         private void Construct(IStoppable stoppable)
         {
-            stoppable.IsStop.Subscribe(CheckState);
+            stoppable.IsStop.Subscribe(CheckState).AddTo(_disposables);
         }
 
         #region MovementInject
@@ -51,7 +55,13 @@ namespace Core.Scripts.Player
 
         private void CheckState(bool isStopped)
         {
+            if (isStopped)
+            {
+                _playerInputAction.Disable();
+                return;
+            }
             
+            _playerInputAction.Enable();
         }
 
         #endregion
@@ -67,6 +77,8 @@ namespace Core.Scripts.Player
 
         public void Dispose()
         {
+            Debug.Log("1");
+            _disposables.Dispose();
             _playerInputAction?.Dispose();
         }
 

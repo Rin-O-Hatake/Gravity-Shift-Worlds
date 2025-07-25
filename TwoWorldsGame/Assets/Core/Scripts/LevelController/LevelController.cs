@@ -71,34 +71,44 @@ namespace Core.Scripts.LevelController
             {
                 return;
             }
-            
             _loadingState.SetLoadingState(true);
-            
             CurrentLevelIndex.Value++;
+            LoadNewLevel();
+        }
+
+        private void LoadNewLevel()
+        {
             LevelDataView levelDataView = _levelDataViews.FirstOrDefault(level => CurrentLevelIndex.Value == level.LevelNumber);
 
             if (!levelDataView)
             {
                 return;
             }
-
+            
             _loadingFadePanel.FadeInLoadingPanel(() => SetupLevelData(levelDataView)).Forget();
         }
 
         private void SetupLevelData(LevelDataView levelDataView)
         {
+            
             ShowLevel(levelDataView);
             _levelTransitionContact.SetNewPosition(levelDataView.ExitLevelPortal.position);
             _setupCamera.SetupLimitationsMove(levelDataView.LevelPolygonCollider2D);
             _playerSetup.SetupPosition(levelDataView.StartPositionPlayer.position);
+
+            _loadingFadePanel.FadeOutLoadingPanel().Forget();
+            _loadingState.SetLoadingState(false);
+
+            if (CurrentLevelIndex.LastValue == default)
+            {
+                return;
+            }
             
             HideLevel(CurrentLevelIndex.LastValue);
         }
         private void HideLevel(int levelNumber)
         {
             _levelDataViews.FirstOrDefault(level => level.LevelNumber == levelNumber).gameObject.SetActive(false);
-            _loadingFadePanel.FadeOutLoadingPanel().Forget();
-            _loadingState.SetLoadingState(false);
         }
 
         private void ShowLevel(LevelDataView levelDataView)
@@ -108,12 +118,14 @@ namespace Core.Scripts.LevelController
 
         public void LoadLevel(int levelIndex = START_LEVEL)
         {
-            if (levelIndex == default)
+            if (levelIndex == default || levelIndex > _levelDataViews.Count)
             {
                 levelIndex = START_LEVEL;
             }
             
             CurrentLevelIndex.Value = levelIndex;
+            _loadingState.SetLoadingState(true);
+            SetupLevelData(_levelDataViews.FirstOrDefault(level => CurrentLevelIndex.Value == level.LevelNumber));
         }
     }
 }
