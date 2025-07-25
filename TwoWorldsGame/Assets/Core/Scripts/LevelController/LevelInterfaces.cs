@@ -14,12 +14,16 @@ namespace Core.Scripts.LevelController
 
     public interface ILoadingNextLevel
     {
-        public ReactiveProperty<int> CurrentLevelIndex { get; }
         public void LoadNextLevel();
     }
 
     public interface ILoadingLevel
     {
         public void LoadLevel(int levelIndex = 1);
+    }
+
+    public interface ILevelTracker
+    {
+        public ReactiveProperty<int> CurrentLevelIndex { get; }
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using Core.Scripts.Camera;
+using Core.Scripts.DataManager;
 using Core.Scripts.LevelController;
 using UnityEngine;
 using Zenject;
@@ -18,6 +20,21 @@ namespace Core.Scripts.MonoInstallers
         {
             InjectSetupCamera();
             InjectLevelController();
+            InjectDataStorage();
+            InjectStorageManager();
+        }
+
+        private void InjectStorageManager()
+        {
+            Container.Bind<StorageManager>().FromNew().AsCached().NonLazy();
+        }
+        
+        private void InjectDataStorage()
+        {
+            Container.Bind<DataStorage>().FromNew().AsCached().NonLazy();
+            
+            Container.Bind<ISaveDataStorage>().To<DataStorage>().AsCached();
+            Container.Bind<ILoaderDataStorage>().To<DataStorage>().AsCached();
         }
 
         private void InjectSetupCamera()
@@ -27,6 +44,8 @@ namespace Core.Scripts.MonoInstallers
         private void InjectLevelController()
         {
             Container.Bind<ILoadingNextLevel>().To<LevelController.LevelController>().FromInstance(_levelController);
+            Container.Bind<ILoadingLevel>().To<LevelController.LevelController>().FromInstance(_levelController);
+            Container.Bind<ILevelTracker>().To<LevelController.LevelController>().FromInstance(_levelController);
         }
     }
 }

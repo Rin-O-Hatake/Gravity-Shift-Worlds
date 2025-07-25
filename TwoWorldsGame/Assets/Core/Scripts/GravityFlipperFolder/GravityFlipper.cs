@@ -27,7 +27,7 @@ namespace Core.Scripts.GravityFlipperFolder
 
         #region Properties
 
-        public ReactiveProperty<bool> IsNormalGravity { get; } = new ReactiveProperty<bool>();
+        public ReactiveProperty<bool> IsNormalGravity { get; } = new ReactiveProperty<bool>(true);
 
         #endregion
 
@@ -48,8 +48,6 @@ namespace Core.Scripts.GravityFlipperFolder
             _groundCheck = groundCheck;
             
             _groundCheck.IsGround.Subscribe(HandlerGrounded).AddTo(_disposables);
-            
-            IsNormalGravity.Value = true;
         }
 
         public void FlipGravity(InputAction.CallbackContext context)

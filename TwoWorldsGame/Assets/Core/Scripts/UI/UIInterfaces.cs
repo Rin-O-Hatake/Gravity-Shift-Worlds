@@ -9,6 +9,7 @@ namespace Core.Scripts.UI
         
         public void AddDiamonds(int amount = 1);
         public void RemoveDiamonds(int amount = 1);
+        public void LoadDiamonds(int amount = 0);
     }
 
     public interface ITooltipDataRepository

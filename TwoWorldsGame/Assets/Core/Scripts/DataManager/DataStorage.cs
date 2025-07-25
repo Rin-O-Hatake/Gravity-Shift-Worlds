@@ -1,24 +1,64 @@
+using Core.Scripts.LevelController;
 using UnityEngine;
+using Zenject;
 
 namespace Core.Scripts.DataManager
 {
-    public class DataStorage : MonoBehaviour, ILoaderDataStorage
+    public class DataStorage : ILoaderDataStorage, ISaveDataStorage
     {
-        
 
-        public void LoaderData(string dataName, string data)
+        #region Save Data
+
+        public void SaveData(SaveDataType dataType, string data)
         {
-            PlayerPrefs.SetString(dataName, data);
+            PlayerPrefs.SetString(dataType.ToString(), data);
         }
 
-        public void LoaderData(string dataName, int data)
+        public void SaveData(SaveDataType dataType, int data)
         {
-            PlayerPrefs.SetInt(dataName, data);
+            PlayerPrefs.SetInt(dataType.ToString(), data);
         }
 
-        public void LoaderData(string dataName, float data)
+        public void SaveData(SaveDataType dataType, float data)
         {
-            PlayerPrefs.SetFloat(dataName, data);
+            PlayerPrefs.SetFloat(dataType.ToString(), data);
         }
+
+        #endregion
+
+
+        #region Get Data
+
+        public string GetDataString(SaveDataType dataType)
+        {
+            if (!PlayerPrefs.HasKey(dataType.ToString()))
+            {
+                return default;
+            }
+            
+            return PlayerPrefs.GetString(dataType.ToString());
+        }
+
+        public int GetDataInt(SaveDataType dataType)
+        {
+            if (!PlayerPrefs.HasKey(dataType.ToString()))
+            {
+                return default;
+            }
+            
+            return PlayerPrefs.GetInt(dataType.ToString());
+        }
+
+        public float GetDataFloat(SaveDataType dataType)
+        {
+            if (!PlayerPrefs.HasKey(dataType.ToString()))
+            {
+                return default;
+            }
+            
+            return PlayerPrefs.GetInt(dataType.ToString());
+        }
+
+        #endregion
     }
 }

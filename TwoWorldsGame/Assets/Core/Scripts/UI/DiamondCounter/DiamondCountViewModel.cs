@@ -23,5 +23,10 @@ namespace Core.Scripts.UI.DiamondCounter
         {
             DiamondCount.Value -= amount;
         }
+
+        public void LoadDiamonds(int amount = 0)
+        {
+            DiamondCount.Value = amount;
+        }
     }
 }

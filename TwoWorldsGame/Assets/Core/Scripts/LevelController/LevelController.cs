@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Core.Scripts.LevelController
 {
-    public class LevelController : MonoBehaviour, ILoadingNextLevel, ILoadingLevel
+    public class LevelController : MonoBehaviour, ILoadingNextLevel, ILoadingLevel, ILevelTracker
     {
         #region Fields
 
@@ -17,6 +17,8 @@ namespace Core.Scripts.LevelController
         private ILevelTransitionContact _levelTransitionContact;
         private ISetupCamera _setupCamera;
         private IPlayerSetup _playerSetup;
+
+        private const int START_LEVEL = 1;
 
         #region Properties
 
@@ -69,8 +71,13 @@ namespace Core.Scripts.LevelController
             levelDataView.gameObject.SetActive(true);
         }
 
-        public void LoadLevel(int levelIndex = 1)
+        public void LoadLevel(int levelIndex = START_LEVEL)
         {
+            if (levelIndex == default)
+            {
+                levelIndex = START_LEVEL;
+            }
+            
             CurrentLevelIndex.Value = levelIndex;
         }
     }

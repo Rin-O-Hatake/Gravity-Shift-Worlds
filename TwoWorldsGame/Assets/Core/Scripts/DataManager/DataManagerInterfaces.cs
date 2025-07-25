@@ -2,10 +2,18 @@ using UnityEngine;
 
 namespace Core.Scripts.DataManager
 {
+    public interface ISaveDataStorage
+    {
+        public void SaveData(SaveDataType dataType, string data);
+        public void SaveData(SaveDataType dataType, int data);
+        public void SaveData(SaveDataType dataType, float data);
+    }
+    
     public interface ILoaderDataStorage
     {
-        public void LoaderData(string dataName, string data);
-        public void LoaderData(string dataName, int data);
-        public void LoaderData(string dataName, float data);
+        public string GetDataString(SaveDataType dataType);
+        public int GetDataInt(SaveDataType dataType);
+        public float GetDataFloat(SaveDataType dataType);
     }
+    
 }
