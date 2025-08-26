@@ -1,5 +1,6 @@
 using System;
 using Core.Scripts.LevelController;
+using Core.Scripts.Player.Attacker;
 using Core.Scripts.StatesGame;
 using UniRx;
 using UnityEngine;
@@ -48,6 +49,17 @@ namespace Core.Scripts.Player
             _playerInputAction.PlayerMovement.Jump.performed += playerJump.Jump;
             _playerInputAction.PlayerMovement.FLipGravity.performed += playerGravity.FlipGravity;
         }
+
+        [Inject]
+        private void Construct(IAttackerInput attackerInput, ISetupMeleeAttack setupMeleeAttack, ISetupRangeAttack setupRangeAttack)
+        {
+            _playerInputAction.Weapon.Enable();
+            
+            _playerInputAction.Weapon.Attack.performed += attackerInput.AttackWeapon;
+            
+            _playerInputAction.Weapon.SlotWeapon1.performed += setupMeleeAttack.Setup;
+            _playerInputAction.Weapon.SlotWeapon2.performed += setupRangeAttack.Setup;
+        }
         
         #endregion
 
@@ -77,7 +89,6 @@ namespace Core.Scripts.Player
 
         public void Dispose()
         {
-            Debug.Log("1");
             _disposables.Dispose();
             _playerInputAction?.Dispose();
         }

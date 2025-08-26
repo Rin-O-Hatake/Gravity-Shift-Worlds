@@ -162,6 +162,74 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Weapon"",
+            ""id"": ""37806eaf-4d96-4095-9480-141317b415a7"",
+            ""actions"": [
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""9c5d928e-8537-4f82-bc90-c7904c25b2a6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SlotWeapon1"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a5b4ba0-8ede-42d2-8fc6-7d3bf711e4d6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SlotWeapon2"",
+                    ""type"": ""Button"",
+                    ""id"": ""dabfff48-8b25-4ce1-ba27-204bc642651a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""ce4d3e0e-95dd-452a-86af-5e0baf88bcd0"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""94de50c1-c3aa-43be-a874-e44ab9174d93"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SlotWeapon1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e3007734-6216-4977-9660-675b48b65393"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SlotWeapon2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -174,12 +242,18 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         // Interaction
         m_Interaction = asset.FindActionMap("Interaction", throwIfNotFound: true);
         m_Interaction_InteractionDoor = m_Interaction.FindAction("InteractionDoor", throwIfNotFound: true);
+        // Weapon
+        m_Weapon = asset.FindActionMap("Weapon", throwIfNotFound: true);
+        m_Weapon_Attack = m_Weapon.FindAction("Attack", throwIfNotFound: true);
+        m_Weapon_SlotWeapon1 = m_Weapon.FindAction("SlotWeapon1", throwIfNotFound: true);
+        m_Weapon_SlotWeapon2 = m_Weapon.FindAction("SlotWeapon2", throwIfNotFound: true);
     }
 
     ~@PlayerInputAction()
     {
         UnityEngine.Debug.Assert(!m_PlayerMovement.enabled, "This will cause a leak and performance issues, PlayerInputAction.PlayerMovement.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Interaction.enabled, "This will cause a leak and performance issues, PlayerInputAction.Interaction.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Weapon.enabled, "This will cause a leak and performance issues, PlayerInputAction.Weapon.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -345,6 +419,68 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         }
     }
     public InteractionActions @Interaction => new InteractionActions(this);
+
+    // Weapon
+    private readonly InputActionMap m_Weapon;
+    private List<IWeaponActions> m_WeaponActionsCallbackInterfaces = new List<IWeaponActions>();
+    private readonly InputAction m_Weapon_Attack;
+    private readonly InputAction m_Weapon_SlotWeapon1;
+    private readonly InputAction m_Weapon_SlotWeapon2;
+    public struct WeaponActions
+    {
+        private @PlayerInputAction m_Wrapper;
+        public WeaponActions(@PlayerInputAction wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Attack => m_Wrapper.m_Weapon_Attack;
+        public InputAction @SlotWeapon1 => m_Wrapper.m_Weapon_SlotWeapon1;
+        public InputAction @SlotWeapon2 => m_Wrapper.m_Weapon_SlotWeapon2;
+        public InputActionMap Get() { return m_Wrapper.m_Weapon; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(WeaponActions set) { return set.Get(); }
+        public void AddCallbacks(IWeaponActions instance)
+        {
+            if (instance == null || m_Wrapper.m_WeaponActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_WeaponActionsCallbackInterfaces.Add(instance);
+            @Attack.started += instance.OnAttack;
+            @Attack.performed += instance.OnAttack;
+            @Attack.canceled += instance.OnAttack;
+            @SlotWeapon1.started += instance.OnSlotWeapon1;
+            @SlotWeapon1.performed += instance.OnSlotWeapon1;
+            @SlotWeapon1.canceled += instance.OnSlotWeapon1;
+            @SlotWeapon2.started += instance.OnSlotWeapon2;
+            @SlotWeapon2.performed += instance.OnSlotWeapon2;
+            @SlotWeapon2.canceled += instance.OnSlotWeapon2;
+        }
+
+        private void UnregisterCallbacks(IWeaponActions instance)
+        {
+            @Attack.started -= instance.OnAttack;
+            @Attack.performed -= instance.OnAttack;
+            @Attack.canceled -= instance.OnAttack;
+            @SlotWeapon1.started -= instance.OnSlotWeapon1;
+            @SlotWeapon1.performed -= instance.OnSlotWeapon1;
+            @SlotWeapon1.canceled -= instance.OnSlotWeapon1;
+            @SlotWeapon2.started -= instance.OnSlotWeapon2;
+            @SlotWeapon2.performed -= instance.OnSlotWeapon2;
+            @SlotWeapon2.canceled -= instance.OnSlotWeapon2;
+        }
+
+        public void RemoveCallbacks(IWeaponActions instance)
+        {
+            if (m_Wrapper.m_WeaponActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IWeaponActions instance)
+        {
+            foreach (var item in m_Wrapper.m_WeaponActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_WeaponActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public WeaponActions @Weapon => new WeaponActions(this);
     public interface IPlayerMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -354,5 +490,11 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
     public interface IInteractionActions
     {
         void OnInteractionDoor(InputAction.CallbackContext context);
+    }
+    public interface IWeaponActions
+    {
+        void OnAttack(InputAction.CallbackContext context);
+        void OnSlotWeapon1(InputAction.CallbackContext context);
+        void OnSlotWeapon2(InputAction.CallbackContext context);
     }
 }

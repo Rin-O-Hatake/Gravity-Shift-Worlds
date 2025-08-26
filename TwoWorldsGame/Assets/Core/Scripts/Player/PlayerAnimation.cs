@@ -9,7 +9,6 @@ namespace Core.Scripts.Player
         #region Fields
 
         [SerializeField] private Animator _playerAnimator;
-        [SerializeField] private SpriteRenderer _playerSpriteRenderer;
 
         private CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -34,9 +33,22 @@ namespace Core.Scripts.Player
 
         private void FlipSprite(float value)
         {
-            _playerSpriteRenderer.flipX = value < 0;
-            
+            FlipScalePlayer(value);
             _playerAnimator.SetBool(IsRun, value != 0);
+        }
+
+        private void FlipScalePlayer(float value)
+        {
+            Transform transform = _playerAnimator.gameObject.transform;
+            float scaleXPlayer = transform.localScale.x;
+
+            if ((scaleXPlayer > 0 && value < 0) || (scaleXPlayer < 0 && value > 0))
+            {
+                scaleXPlayer *= -1;
+            }
+            
+            Vector3 newScalePlayer = new Vector3(scaleXPlayer, transform.localScale.y, transform.localScale.z);
+            _playerAnimator.gameObject.transform.localScale = newScalePlayer;
         }
 
         private void StartJumpAnimation(bool value)
